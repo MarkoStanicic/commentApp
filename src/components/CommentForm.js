@@ -7,7 +7,7 @@ class CommentForm extends Component {
 			<form onSubmit={this._handleSubmit.bind(this)} className="comment-form">
 				<label>Join the discussion</label>
 				<div className="comment-form-fields">
-					<input placeholder="Name:" ref={(input) => this._author = input}></input>
+					<input placeholder="Name:" ref={(input) => this._author = input} />
 					<textarea placeholder="Comment:" ref={(textarea) => this._body = textarea}></textarea>
 				</div>
 				<div className="comment-form-actions">

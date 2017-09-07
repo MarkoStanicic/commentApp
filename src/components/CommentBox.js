@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 import Button from 'antd/lib/button'
@@ -75,9 +76,31 @@ class CommentBox extends Component {
 				<Comment
 					author={comment.author}
 					body={comment.body}
-					key={comment.id} />
+					onDelete={this._deleteComment.bind(this)} />
 			);
 		});
+	}
+
+	_fetchComments() {
+		$.ajax({
+			method: 'GET',
+			url: `/api/comments`,
+			success: (comments) => {
+				this.setState({ comments })
+			}
+		});
+	}
+
+	_deleteComment(comment) {
+		$.ajax({
+			method: 'DELETE',
+			url: `/api/comments/${comment.id}`
+		});
+
+		const comments = [...this.state.comments];
+		const commentIndex = comments.indexOf(comment);
+		comments.splice(commentIndex, 1);
+		this.setState({ comments });
 	}
 
 	_getCommentsTitle(commentCount) {
@@ -91,13 +114,15 @@ class CommentBox extends Component {
 	}
 
 	_addComment(author, body) {
-		const comment = {
-			id: this.state.comments.length + 1,
-			author,
-			body
-		};
+		const comment = { author, body };
+
+		$.post('/api/comments', { comment })
+		.success(newComment => {
+			this.setState({ comments: this.state.comments.concat([newComment]) });
+		});
 		this.setState({ comments: this.state.comments.concat([comment] ) });
 	}
+
 }
 
 export default CommentBox;
